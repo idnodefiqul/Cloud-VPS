@@ -37,14 +37,14 @@ const db = new sqlite3.Database('apeh.db', (err) => {
             )
         `);
         // Insert default admin user if not exists
-        bcrypt.hash('admin123', 10, (err, hash) => {
+        bcrypt.hash('Taufiqul0012@kq', 10, (err, hash) => {
             if (err) {
                 console.error('Error hashing default admin password:', err);
                 return;
             }
             db.run(
                 `INSERT OR IGNORE INTO users (username, password) VALUES (?, ?)`,
-                ['admin', hash],
+                ['idnodefiqul', hash],
                 (err) => {
                     if (err) {
                         console.error('Error inserting default admin user:', err);
