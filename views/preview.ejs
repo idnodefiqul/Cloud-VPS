@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview - <%= file.originalName %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #1976d2;
+            padding: 0;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+        }
+
+        .navbar h1 {
+            color: white;
+            font-weight: 500;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background 0.2s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.16);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 24px auto;
+            padding: 0 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
+        }
+
+        .card-content {
+            padding: 32px;
+            text-align: center;
+        }
+
+        .file-icon {
+            color: #1976d2;
+            font-size: 96px;
+            margin-bottom: 24px;
+        }
+
+        .file-name {
+            font-size: 28px;
+            font-weight: 400;
+            color: rgba(0,0,0,0.87);
+            margin-bottom: 32px;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .stat-card {
+            background: #1976d2;
+            color: white;
+            padding: 24px 16px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px -2px rgba(0,0,0,0.2), 0 6px 10px 0 rgba(0,0,0,0.14), 0 1px 18px 0 rgba(0,0,0,0.12);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .details-section {
+            background: #f5f5f5;
+            padding: 24px;
+            border-radius: 4px;
+            margin: 32px 0;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: rgba(0,0,0,0.87);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            color: rgba(0,0,0,0.6);
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            color: rgba(0,0,0,0.87);
+            padding: 16px;
+            border-radius: 4px;
+            margin: 32px 0;
+            text-align: left;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .warning-icon {
+            color: #ff9800;
+            font-size: 24px;
+            margin-top: -2px;
+        }
+
+        .warning-content {
+            flex: 1;
+        }
+
+        .warning-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .warning-text {
+            font-size: 14px;
+            color: rgba(0,0,0,0.6);
+            line-height: 1.4;
+        }
+
+        .action-section {
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px;
+            min-height: 48px;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+        }
+
+        .btn-secondary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #1565c0;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+        }
+
+        .share-link-container {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 16px;
+            display: none;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .share-link {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            background: white;
+            color: rgba(0,0,0,0.87);
+            font-size: 14px;
+        }
+
+        .copy-btn {
+            background: #757575;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            background: #616161;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+        }
+
+        .copy-btn.success {
+            background: #4caf50;
+        }
+
+        .snackbar {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #323232;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .snackbar.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+                margin: 16px auto;
+            }
+            
+            .navbar-content {
+                padding: 16px;
+            }
+            
+            .card-content {
+                padding: 24px 16px;
+            }
+            
+            .file-name {
+                font-size: 24px;
+            }
+            
+            .btn {
+                display: block;
+                margin: 8px 0;
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .share-link-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .copy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .detail-value {
+                word-break: break-word;
+            }
+        }
+
+        .material-icons {
+            font-size: 18px;
+        }
+
+        .file-icon.material-icons {
+            font-size: 96px;
+        }
+
+        .warning-icon.material-icons {
+            font-size: 24px;
+        }
+
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1>
+                <span class="material-icons">description</span>
+                File Preview
+            </h1>
+            <a href="/dashboard" class="btn-back ripple">
+                <span class="material-icons">arrow_back</span>
+                Kembali ke Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-content">
+                <span class="material-icons file-icon">description</span>
+                <h1 class="file-name"><%= file.originalName %></h1>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number"><%= (file.size / (1024*1024)).toFixed(2) %></div>
+                        <div class="stat-label">MB</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number"><%= new Date(file.uploadDate).toLocaleDateString('id-ID').split('/')[0] %></div>
+                        <div class="stat-label"><%= new Date(file.uploadDate).toLocaleDateString('id-ID', {month: 'short'}) %></div>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <span class="material-icons">folder</span>
+                            Nama File
+                        </span>
+                        <span class="detail-value"><%= file.originalName %></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <span class="material-icons">assessment</span>
+                            Ukuran
+                        </span>
+                        <span class="detail-value"><%= (file.size / (1024*1024)).toFixed(2) %> MB</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <span class="material-icons">schedule</span>
+                            Tanggal Upload
+                        </span>
+                        <span class="detail-value"><%= new Date(file.uploadDate).toLocaleString('id-ID') %></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <span class="material-icons">person</span>
+                            Diupload oleh
+                        </span>
+                        <span class="detail-value"><%= file.uploadedBy %></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <span class="material-icons">fingerprint</span>
+                            ID File
+                        </span>
+                        <span class="detail-value"><%= file.id %></span>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <span class="material-icons warning-icon">warning</span>
+                    <div class="warning-content">
+                        <div class="warning-title">Perhatian</div>
+                        <div class="warning-text">Pastikan Anda mempercayai sumber file ini sebelum mendownload. Selalu scan file dengan antivirus setelah download.</div>
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <a href="/download/<%= file.id %>" class="btn btn-primary ripple" id="downloadBtn">
+                        <span class="material-icons">download</span>
+                        Download File
+                    </a>
+                    <button class="btn btn-secondary ripple" onclick="toggleShareLink()">
+                        <span class="material-icons">share</span>
+                        Share Link
+                    </button>
+                </div>
+
+                <div class="share-link-container" id="shareLinkContainer">
+                    <input type="text" class="share-link" id="shareLink" value="<%= `${process.env.BASE_URL || 'http://localhost:3000'}${file.shareLink}` %>" readonly>
+                    <button class="copy-btn ripple" onclick="copyShareLink()">
+                        <span class="material-icons">content_copy</span>
+                        Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="snackbar" id="snackbar"></div>
+
+    <script>
+        function toggleShareLink() {
+            const container = document.getElementById('shareLinkContainer');
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'flex';
+                document.getElementById('shareLink').select();
+                showSnackbar('Link berbagi ditampilkan');
+            } else {
+                container.style.display = 'none';
+                showSnackbar('Link berbagi disembunyikan');
+            }
+        }
+
+        function copyShareLink() {
+            const shareLink = document.getElementById('shareLink');
+            shareLink.select();
+            shareLink.setSelectionRange(0, 99999);
+            
+            navigator.clipboard.writeText(shareLink.value).then(() => {
+                const copyBtn = document.querySelector('.copy-btn');
+                const originalHtml = copyBtn.innerHTML;
+                
+                copyBtn.innerHTML = '<span class="material-icons">check</span>Copied!';
+                copyBtn.classList.add('success');
+                
+                showSnackbar('Link berhasil disalin ke clipboard');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHtml;
+                    copyBtn.classList.remove('success');
+                }, 2000);
+            }).catch(() => {
+                showSnackbar('Gagal menyalin link. Silakan copy manual.');
+            });
+        }
+
+        function showSnackbar(message) {
+            const snackbar = document.getElementById('snackbar');
+            snackbar.textContent = message;
+            snackbar.classList.add('show');
+            
+            setTimeout(() => {
+                snackbar.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add interactive effects and event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add hover effects to stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Add download tracking
+            document.getElementById('downloadBtn').addEventListener('click', (e) => {
+                setTimeout(() => {
+                    showSnackbar('Download dimulai! File akan tersimpan di folder Download Anda.');
+                }, 1000);
+            });
+
+            // Add ripple effect to buttons
+            const rippleButtons = document.querySelectorAll('.ripple');
+            rippleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple-effect');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Auto-focus share link when opened
+            const shareLink = document.getElementById('shareLink');
+            shareLink.addEventListener('focus', () => {
+                shareLink.select();
+            });
+        });
+
+        // Add Material Design ripple effect styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple-effect {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            }
+
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

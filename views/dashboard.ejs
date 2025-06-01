@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - File Share App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #1976d2;
+            padding: 0;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+        }
+
+        .navbar h1 {
+            color: white;
+            font-weight: 500;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .username {
+            color: rgba(255,255,255,0.87);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background 0.2s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.16);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 24px auto;
+            padding: 0 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
+            margin-bottom: 24px;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .upload-area {
+            border: 2px dashed #e0e0e0;
+            border-radius: 4px;
+            padding: 48px 24px;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: #1976d2;
+            background: rgba(25, 118, 210, 0.04);
+        }
+
+        .upload-area.drag-over {
+            border-color: #1976d2;
+            background: rgba(25, 118, 210, 0.08);
+        }
+
+        .upload-icon {
+            color: #757575;
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            color: rgba(0,0,0,0.87);
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            color: rgba(0,0,0,0.6);
+            font-size: 14px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 24px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #1976d2;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 8px;
+            color: rgba(0,0,0,0.6);
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: rgba(0,0,0,0.87);
+            margin-bottom: 24px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .file-card {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 1px -1px rgba(0,0,0,0.2), 0 1px 1px 0 rgba(0,0,0,0.14), 0 1px 3px 0 rgba(0,0,0,0.12);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .file-card:hover {
+            box-shadow: 0 3px 3px -2px rgba(0,0,0,0.2), 0 3px 4px 0 rgba(0,0,0,0.14), 0 1px 8px 0 rgba(0,0,0,0.12);
+        }
+
+        .file-card-content {
+            padding: 16px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: rgba(0,0,0,0.87);
+            margin-bottom: 8px;
+            word-break: break-word;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-info {
+            color: rgba(0,0,0,0.6);
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            min-height: 36px;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1565c0;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+        }
+
+        .btn-secondary {
+            background: #757575;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #616161;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c62828;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: rgba(0,0,0,0.6);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+            color: #bdbdbd;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            color: rgba(0,0,0,0.6);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+                margin: 16px auto;
+            }
+            
+            .navbar-content {
+                padding: 16px;
+            }
+            
+            .card-content {
+                padding: 16px;
+            }
+            
+            .upload-area {
+                padding: 32px 16px;
+            }
+            
+            .file-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-right {
+                gap: 8px;
+            }
+
+            .username {
+                display: none;
+            }
+        }
+
+        .material-icons {
+            font-size: 18px;
+        }
+
+        .upload-area .material-icons {
+            font-size: 48px;
+        }
+
+        .empty-state .material-icons {
+            font-size: 64px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1>
+                <span class="material-icons">folder</span>
+                File Share Dashboard
+            </h1>
+            <div class="navbar-right">
+                <span class="username">
+                    <span class="material-icons">person</span>
+                    Halo, <%= username %>
+                </span>
+                <a href="/logout" class="btn-logout">
+                    <span class="material-icons" style="font-size: 16px; margin-right: 4px;">exit_to_app</span>
+                    Keluar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-content">
+                <div class="upload-area" id="uploadArea">
+                    <span class="material-icons upload-icon">cloud_upload</span>
+                    <div class="upload-text">
+                        Klik untuk upload atau drag & drop file
+                    </div>
+                    <div class="upload-subtext">
+                        Maksimal ukuran file: 10GB
+                    </div>
+                    <input type="file" id="fileInput" class="file-input">
+                    
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="section-title">
+                    <span class="material-icons">folder_open</span>
+                    File Saya
+                </h2>
+                
+                <% if (files.length === 0) { %>
+                    <div class="empty-state">
+                        <span class="material-icons empty-icon">inbox</span>
+                        <div class="empty-text">Belum ada file yang diupload</div>
+                    </div>
+                <% } else { %>
+                    <div class="file-grid">
+                        <% files.forEach(file => { %>
+                            <div class="file-card">
+                                <div class="file-card-content">
+                                    <div class="file-name">
+                                        <span class="material-icons">description</span>
+                                        <%= file.originalName %>
+                                    </div>
+                                    <div class="file-info">
+                                        Ukuran: <%= (file.size / (1024*1024)).toFixed(2) %> MB<br>
+                                        Upload: <%= new Date(file.uploadDate).toLocaleDateString('id-ID') %>
+                                    </div>
+                                    <div class="file-actions">
+                                        <a href="<%= file.shareLink %>" class="btn btn-primary" target="_blank">
+                                            <span class="material-icons">visibility</span>
+                                            Preview
+                                        </a>
+                                        <button class="btn btn-secondary" onclick="copyShareLink('<%= file.shareLink %>')">
+                                            <span class="material-icons">content_copy</span>
+                                            Copy Link
+                                        </button>
+                                        <button class="btn btn-danger" onclick="deleteFile('<%= file.id %>')">
+                                            <span class="material-icons">delete</span>
+                                            Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                uploadFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                uploadFile(e.target.files[0]);
+            }
+        });
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            progressContainer.style.display = 'block';
+            
+            const xhr = new XMLHttpRequest();
+            
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    progressFill.style.width = percentComplete + '%';
+                    progressText.textContent = Math.round(percentComplete) + '%';
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    alert('File berhasil diupload!');
+                    location.reload();
+                } else {
+                    alert('Gagal mengupload file');
+                }
+                progressContainer.style.display = 'none';
+                progressFill.style.width = '0%';
+                progressText.textContent = '0%';
+            });
+
+            xhr.addEventListener('error', () => {
+                alert('Terjadi kesalahan saat upload');
+                progressContainer.style.display = 'none';
+                progressFill.style.width = '0%';
+                progressText.textContent = '0%';
+            });
+
+            xhr.open('POST', '/upload');
+            xhr.send(formData);
+        }
+
+        function copyShareLink(shareLink) {
+            const fullUrl = window.location.origin + shareLink;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                alert('Link berhasil disalin!');
+            }).catch(() => {
+                alert('Gagal menyalin link');
+            });
+        }
+
+        function deleteFile(fileId) {
+            if (confirm('Yakin ingin menghapus file ini?')) {
+                fetch(`/file/${fileId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('File berhasil dihapus');
+                        location.reload();
+                    } else {
+                        alert('Gagal menghapus file');
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

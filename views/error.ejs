@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - File Share App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .error-container {
+            background: white;
+            padding: 48px 32px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px -4px rgba(0,0,0,0.12), 0 4px 8px 0 rgba(0,0,0,0.08), 0 1px 4px 0 rgba(0,0,0,0.04);
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f44336, #e91e63, #9c27b0, #673ab7);
+        }
+
+        .emoji-container {
+            margin-bottom: 32px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .error-emoji {
+            font-size: 96px;
+            margin-bottom: 16px;
+            display: block;
+            animation: disappointedFloat 3s ease-in-out infinite;
+        }
+
+        .error-emoji-secondary {
+            font-size: 32px;
+            position: absolute;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .emoji-1 {
+            top: -10px;
+            left: -30px;
+            animation-delay: -0.5s;
+        }
+
+        .emoji-2 {
+            top: 10px;
+            right: -25px;
+            animation-delay: -1s;
+        }
+
+        .emoji-3 {
+            bottom: -5px;
+            left: -20px;
+            animation-delay: -1.5s;
+        }
+
+        .error-code {
+            background: #ffebee;
+            color: #c62828;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: inline-block;
+            border: 1px solid #ffcdd2;
+        }
+
+        .error-title {
+            font-size: 32px;
+            color: rgba(0,0,0,0.87);
+            margin-bottom: 16px;
+            font-weight: 400;
+            line-height: 1.2;
+        }
+
+        .error-message {
+            color: rgba(0,0,0,0.6);
+            font-size: 16px;
+            margin-bottom: 32px;
+            line-height: 1.5;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error-details {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 4px;
+            margin: 24px 0;
+            text-align: left;
+            border-left: 4px solid #f44336;
+        }
+
+        .error-details h4 {
+            color: rgba(0,0,0,0.87);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-details p {
+            color: rgba(0,0,0,0.6);
+            font-size: 14px;
+            font-family: 'Roboto Mono', monospace;
+            line-height: 1.4;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1565c0;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2), 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1976d2;
+            border: 1px solid #1976d2;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(25, 118, 210, 0.04);
+        }
+
+        .suggestion-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .suggestion-title {
+            color: #1976d2;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suggestion-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .suggestion-list li {
+            color: rgba(0,0,0,0.6);
+            font-size: 14px;
+            margin-bottom: 4px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .suggestion-list li::before {
+            content: '•';
+            color: #1976d2;
+            position: absolute;
+            left: 0;
+        }
+
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        @keyframes disappointedFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(-8px) scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .error-container {
+                padding: 32px 24px;
+                margin: 16px;
+            }
+            
+            .error-title {
+                font-size: 28px;
+            }
+            
+            .error-emoji {
+                font-size: 80px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .error-emoji-secondary {
+                display: none;
+            }
+        }
+
+        .material-icons {
+            font-size: 18px;
+        }
+
+        /* Loading animation for retry button */
+        .btn-loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="emoji-container">
+            <span class="error-emoji">😞</span>
+            <span class="error-emoji-secondary emoji-1">💔</span>
+            <span class="error-emoji-secondary emoji-2">😔</span>
+            <span class="error-emoji-secondary emoji-3">😢</span>
+        </div>
+
+        <div class="error-code">Error Occurred</div>
+        
+        <h1 class="error-title">Ups! Ada yang salah</h1>
+        <p class="error-message"><%= message || 'Terjadi kesalahan yang tidak terduga. Mohon coba lagi beberapa saat.' %></p>
+
+        <div class="error-details">
+            <h4>
+                <span class="material-icons">info</span>
+                Detail Error
+            </h4>
+            <p>Timestamp: <%= new Date().toLocaleString('id-ID') %></p>
+        </div>
+
+        <div class="suggestion-box">
+            <div class="suggestion-title">
+                <span class="material-icons">lightbulb</span>
+                Saran Perbaikan
+            </div>
+            <ul class="suggestion-list">
+                <li>Periksa koneksi internet Anda</li>
+                <li>Refresh halaman dan coba lagi</li>
+                <li>Pastikan file masih tersedia</li>
+                <li>Hubungi administrator jika masalah berlanjut</li>
+            </ul>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/dashboard" class="btn btn-primary ripple">
+                <span class="material-icons">home</span>
+                Kembali ke Dashboard
+            </a>
+            <button class="btn btn-secondary ripple" onclick="retryAction()">
+                <span class="material-icons">refresh</span>
+                Coba Lagi
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function retryAction() {
+            const retryBtn = document.querySelector('.btn-secondary');
+            const originalContent = retryBtn.innerHTML;
+            
+            // Show loading state
+            retryBtn.classList.add('btn-loading');
+            retryBtn.innerHTML = '<span class="material-icons">refresh</span>Mencoba...';
+            retryBtn.disabled = true;
+            
+            // Simulate retry process
+            setTimeout(() => {
+                // Reload the current page
+                window.location.reload();
+            }, 1500);
+        }
+
+        // Add ripple effect to buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            const rippleButtons = document.querySelectorAll('.ripple');
+            
+            rippleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple-effect');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Add floating animation to emojis on hover
+            const mainEmoji = document.querySelector('.error-emoji');
+            mainEmoji.addEventListener('mouseenter', () => {
+                mainEmoji.style.animationDuration = '1s';
+            });
+            
+            mainEmoji.addEventListener('mouseleave', () => {
+                mainEmoji.style.animationDuration = '3s';
+            });
+        });
+
+        // Add Material Design ripple effect styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple-effect {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            }
+
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
